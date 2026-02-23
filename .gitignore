@@ -1,6 +1,9 @@
-__pycache__/
-node_modules/
+# Python temporary files
+backend/__pycache__/
+backend/*.db
+backend/venv/
+
+# React temporary files (for later)
+frontend/node_modules/
+frontend/build/
 .env
-venv/
-*.db
-.DS_Store
