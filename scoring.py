@@ -1,27 +1,36 @@
-# --- THE SMARTER BANK GUARD (RISK SCORING) ---
+# --- THE ADVANCED BANKING BRAIN ---
 
-# Inputs (Imagine these are from a bank's online form)
-monthly_income = 20000
-monthly_expenses = 5000
+# 1. Inputs (The data we get from the user)
+credit_score = 720  # Out of 850
+monthly_income = 25000
+monthly_expenses = 8000
 
-# 1. We calculate the Debt-to-Income Ratio (DTI)
-# Analogy: How much of your "pie" is eaten by bills?
-# We multiply by 100 to get a percentage (%)
-dti_ratio = (monthly_expenses / monthly_income) * 100
+# 2. Weights (How important each thing is - Total must be 1.0 or 100%)
+# Banks like Investec value credit history very highly
+credit_weight = 0.6 
+debt_weight = 0.4
 
-# 2. Logic to determine the "Risk Level"
-# In CAT, think of this like an 'IF' formula in Excel
-if dti_ratio < 30:
-    risk_level = "LOW"
-    message = "You are a safe bet! ✅"
-elif dti_ratio <= 50:
-    risk_level = "MEDIUM"
-    message = "We can help you, but be careful. ⚠️"
+# 3. Normalizing the scores (Turning them into a mark out of 100)
+# Credit: (Your Score / Max Score) * 100
+credit_points = (credit_score / 850) * 100
+
+# Debt: If you spend 0, you get 100 points. If you spend everything, you get 0.
+dti_ratio = (monthly_expenses / monthly_income)
+debt_points = (1 - dti_ratio) * 100
+
+# 4. The Final Weighted Calculation
+# (Point A * Weight A) + (Point B * Weight B)
+final_score = (credit_points * credit_weight) + (debt_points * debt_weight)
+
+# 5. The Output
+print(f"--- FinTech Loan Analysis ---")
+print(f"Credit Points: {round(credit_points, 2)}/100")
+print(f"Debt Points: {round(debt_points, 2)}/100")
+print(f"Overall Financial Health Score: {round(final_score, 2)}")
+
+if final_score > 70:
+    print("Decision: APPROVED ✅")
+elif final_score > 50:
+    print("Decision: REQUIRES MANUAL REVIEW ⚠️")
 else:
-    risk_level = "HIGH"
-    message = "Sorry, you have too much debt. ❌"
-
-# 3. Output the result
-print(f"Your Debt Ratio is: {dti_ratio}%")
-print(f"Calculated Risk: {risk_level}")
-print(f"Bank Decision: {message}")
+    print("Decision: DECLINED ❌")
