@@ -1,36 +1,40 @@
-# --- THE ADVANCED BANKING BRAIN ---
+import sqlite3  # Import the tool to talk to the database
 
-# 1. Inputs (The data we get from the user)
-credit_score = 720  # Out of 850
+# --- 1. THE MATH ENGINE (The Brain) ---
+customer_name = "Nhlanzeko" # We'll make this dynamic later!
+credit_score = 720
 monthly_income = 25000
 monthly_expenses = 8000
 
-# 2. Weights (How important each thing is - Total must be 1.0 or 100%)
-# Banks like Investec value credit history very highly
-credit_weight = 0.6 
-debt_weight = 0.4
-
-# 3. Normalizing the scores (Turning them into a mark out of 100)
-# Credit: (Your Score / Max Score) * 100
+# Normalizing scores (Same math as before)
 credit_points = (credit_score / 850) * 100
-
-# Debt: If you spend 0, you get 100 points. If you spend everything, you get 0.
 dti_ratio = (monthly_expenses / monthly_income)
 debt_points = (1 - dti_ratio) * 100
 
-# 4. The Final Weighted Calculation
-# (Point A * Weight A) + (Point B * Weight B)
-final_score = (credit_points * credit_weight) + (debt_points * debt_weight)
-
-# 5. The Output
-print(f"--- FinTech Loan Analysis ---")
-print(f"Credit Points: {round(credit_points, 2)}/100")
-print(f"Debt Points: {round(debt_points, 2)}/100")
-print(f"Overall Financial Health Score: {round(final_score, 2)}")
+# Final Weighted Score (60% Credit, 40% Debt)
+final_score = (credit_points * 0.6) + (debt_points * 0.4)
 
 if final_score > 70:
-    print("Decision: APPROVED ✅")
-elif final_score > 50:
-    print("Decision: REQUIRES MANUAL REVIEW ⚠️")
+    decision = "APPROVED"
 else:
-    print("Decision: DECLINED ❌")
+    decision = "DECLINED"
+
+# --- 2. THE SAVING ENGINE (The Memory) ---
+
+# Connect to our 'bank_records.db' file
+connection = sqlite3.connect('bank_records.db')
+cursor = connection.cursor()
+
+# Prepare the SQL command: "Insert these details into the table"
+# The '?' are placeholders to keep things safe and organized
+sql_command = "INSERT INTO applications (customer_name, credit_score, final_score, decision) VALUES (?, ?, ?, ?)"
+data_to_save = (customer_name, credit_score, round(final_score, 2), decision)
+
+# Execute (Do the work) and Commit (Save it permanently)
+cursor.execute(sql_command, data_to_save)
+connection.commit()
+
+# Always close the connection when done!
+connection.close()
+
+print(f"Application for {customer_name} processed and saved to the database! 🏦")
