@@ -1,24 +1,27 @@
-# --- THE BANK GUARD'S LOGIC ---
+# --- THE SMARTER BANK GUARD (RISK SCORING) ---
 
-# 1. We ask the user for their information (Inputs)
-# Think of this like filling out a form at Standard Bank
-credit_score = 650
-monthly_income = 15000
-monthly_expenses = 4000
+# Inputs (Imagine these are from a bank's online form)
+monthly_income = 20000
+monthly_expenses = 5000
 
-# 2. We calculate the "Leftover Money"
-# This is what's left after you pay for food and rent
-leftover_money = monthly_income - monthly_expenses
+# 1. We calculate the Debt-to-Income Ratio (DTI)
+# Analogy: How much of your "pie" is eaten by bills?
+# We multiply by 100 to get a percentage (%)
+dti_ratio = (monthly_expenses / monthly_income) * 100
 
-# 3. The Decision Logic (The "IF" statements)
-# We check if the credit score is good AND if they have enough money left
-if credit_score > 600 and leftover_money > 5000:
-    # If both are true, they win!
-    print("Congratulations! Your loan is APPROVED. ✅")
+# 2. Logic to determine the "Risk Level"
+# In CAT, think of this like an 'IF' formula in Excel
+if dti_ratio < 30:
+    risk_level = "LOW"
+    message = "You are a safe bet! ✅"
+elif dti_ratio <= 50:
+    risk_level = "MEDIUM"
+    message = "We can help you, but be careful. ⚠️"
 else:
-    # If even one is false, they are declined
-    print("Sorry, your loan was DECLINED. ❌")
-    
-# 4. Show the math so the user understands why
-print("Reasoning:")
-print("Your leftover money is: R", leftover_money)
+    risk_level = "HIGH"
+    message = "Sorry, you have too much debt. ❌"
+
+# 3. Output the result
+print(f"Your Debt Ratio is: {dti_ratio}%")
+print(f"Calculated Risk: {risk_level}")
+print(f"Bank Decision: {message}")
