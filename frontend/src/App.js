@@ -11,6 +11,9 @@ function App() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  // Use the Railway URL from environment variables, fallback to localhost for development
+  const apiUrl = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError(null); // Clear errors when user types
@@ -21,15 +24,14 @@ function App() {
     setResult(null);
     
     try {
-      // Sending data to our FastAPI "Waiter"
-      const response = await fetch(`http://127.0.0.1:8000/apply?name=${formData.name}&score=${formData.score}&income=${formData.income}&expenses=${formData.expenses}`, {
+      // Updated to use dynamic apiUrl
+      const response = await fetch(`${apiUrl}/apply?name=${formData.name}&score=${formData.score}&income=${formData.income}&expenses=${formData.expenses}`, {
         method: 'POST'
       });
       
       const data = await response.json();
 
       if (!response.ok) {
-        // This catches our "Safety Checks" from the backend
         throw new Error(data.detail || "Something went wrong");
       }
 
@@ -53,10 +55,8 @@ function App() {
           <button type="submit">Check Eligibility</button>
         </form>
 
-        {/* Error Message Display */}
         {error && <p style={{ color: '#ff3860', marginTop: '10px' }}>⚠️ {error}</p>}
 
-        {/* 📊 THE RISK GAUGE */}
         {result && (
           <div className="result-card" style={{ borderLeftColor: result.status === "APPROVED" ? "#00d1b2" : "#ff3860" }}>
             <h3>Result for {result.customer}</h3>
