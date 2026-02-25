@@ -1,38 +1,55 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+  background-color: #1a1a1a; /* Dark mode, very common in FinTech */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.App-link {
-  color: #61dafb;
+form {
+  background: #2d2d2d;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  width: 350px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #3d3d3d;
+  color: white;
+  box-sizing: border-box; /* Keeps padding from breaking width */
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #00d1b2; /* A nice "FinTech Green" */
+  color: #1a1a1a;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #00bfa5;
+  transform: translateY(-2px);
+}
+
+.result-card {
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #2d2d2d;
+  border-left: 10px solid; /* We will color this based on result */
 }

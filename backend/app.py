@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 import sqlite3
+from fastapi.middleware.cors import CORSMiddleware
 
 # 1. Create the App instance (Our "Restaurant")
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # This allows your React app to talk to the API
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 2. Define a "Welcome" page
 # When you visit http://127.0.0.1:8000/, this runs
