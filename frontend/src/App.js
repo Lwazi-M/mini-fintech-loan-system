@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import './App.css';
 
 function App() {
-  // 1. These are our "Sticky Notes" (State)
-  // We start them as empty strings ""
   const [formData, setFormData] = useState({
     name: "",
     score: "",
@@ -11,47 +9,70 @@ function App() {
     expenses: ""
   });
   const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
-  // 2. This function updates the "Sticky Note" as you type
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError(null); // Clear errors when user types
   };
 
-  // 3. This is the "Submit" action
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Stop the page from refreshing
+    e.preventDefault();
+    setResult(null);
     
-    // We send the data to our Python Waiter (API)
-    const response = await fetch(`http://127.0.0.1:8000/apply?name=${formData.name}&score=${formData.score}&income=${formData.income}&expenses=${formData.expenses}`, {
-      method: 'POST'
-    });
-    
-    const data = await response.json();
-    setResult(data); // Save the answer from the bank
+    try {
+      // Sending data to our FastAPI "Waiter"
+      const response = await fetch(`http://127.0.0.1:8000/apply?name=${formData.name}&score=${formData.score}&income=${formData.income}&expenses=${formData.expenses}`, {
+        method: 'POST'
+      });
+      
+      const data = await response.json();
+
+      if (!response.ok) {
+        // This catches our "Safety Checks" from the backend
+        throw new Error(data.detail || "Something went wrong");
+      }
+
+      setResult(data);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🏦 FinTech Loan Scorer</h1>
+        <h1>🏦 Investec Loan Scorer</h1>
         
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <form onSubmit={handleSubmit}>
           <input name="name" placeholder="Full Name" onChange={handleChange} required />
           <input name="score" type="number" placeholder="Credit Score (0-850)" onChange={handleChange} required />
           <input name="income" type="number" placeholder="Monthly Income (R)" onChange={handleChange} required />
           <input name="expenses" type="number" placeholder="Monthly Expenses (R)" onChange={handleChange} required />
           
-          <button type="submit" style={{ padding: '10px', backgroundColor: '#0070f3', color: 'white', border: 'none', cursor: 'pointer' }}>
-            Check Eligibility
-          </button>
+          <button type="submit">Check Eligibility</button>
         </form>
 
-        {/* 4. Show the result only if we have one */}
+        {/* Error Message Display */}
+        {error && <p style={{ color: '#ff3860', marginTop: '10px' }}>⚠️ {error}</p>}
+
+        {/* 📊 THE RISK GAUGE */}
         {result && (
-          <div style={{ marginTop: '20px', padding: '20px', border: '1px solid white' }}>
+          <div className="result-card" style={{ borderLeftColor: result.status === "APPROVED" ? "#00d1b2" : "#ff3860" }}>
             <h3>Result for {result.customer}</h3>
-            <p>Score: {result.final_score}</p>
-            <h2 style={{ color: result.status === "APPROVED" ? "green" : "red" }}>
+            
+            <div className="gauge-container" style={{ background: '#444', height: '12px', width: '100%', borderRadius: '6px', margin: '15px 0' }}>
+              <div className="gauge-fill" style={{ 
+                background: result.status === "APPROVED" ? "#00d1b2" : "#ff3860", 
+                height: '100%', 
+                width: `${result.final_score}%`, 
+                borderRadius: '6px',
+                transition: 'width 1.5s ease-in-out' 
+              }}></div>
+            </div>
+            
+            <p>Financial Health Score: <strong>{result.final_score}/100</strong></p>
+            <h2 style={{ color: result.status === "APPROVED" ? "#00d1b2" : "#ff3860" }}>
               {result.status}
             </h2>
           </div>
